@@ -1,16 +1,31 @@
-import csv
+import csv,os
+
+
+"""
+
+J2Reader expects files created in following way:
+
+COPY "vcard" TO '/tmp/jabberpl.org-vcard.sql' DELIMITER ',' CSV HEADER;
+
+"""
 
 class J2Reader(object):
+	rows = []
+
 	def __init__(self, filename):
 		self.filename = filename
 
 	def read(self):
+		self.rows = []
 		with open(self.filename, 'rb') as csvfile:
 			reader = csv.reader(csvfile)
 			for row in reader:
-				print row
+				self.rows.append(row)
+		
 
 if __name__ == "__main__":
-	j2reader = J2Reader("/tmp/jabberpl.org.authreg.csv")
+	filename = os.path.join(os.environ['HOME'], 'dev/ejabberd', 'jabberpl.org.authreg.csv')
+	j2reader = J2Reader(filename)
 	j2reader.read()
+	print j2reader.rows
 
