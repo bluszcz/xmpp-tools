@@ -5,7 +5,7 @@ import csv,os
 
 J2Reader expects files created in following way:
 
-COPY "vcard" TO '/tmp/jabberpl.org-vcard.sql' DELIMITER ',' CSV HEADER;
+COPY "vcard" TO '/tmp/jabberpl.org-vcard.csv' DELIMITER ',' CSV HEADER;
 
 """
 
