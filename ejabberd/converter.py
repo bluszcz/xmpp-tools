@@ -2,6 +2,11 @@ import os
 from j2reader import J2Reader
 from ejwriter import EJWriter
 
+#  username |         jid          | nick | subscription | ask | askmessage | server | subscribe | type |         created_at         
+# ----------+----------------------+------+--------------+-----+------------+--------+-----------+------+----------------------------
+#  bluszcz  | bluszcz@bluszcz.net  |      | B            | O   |            | N      |           | item | 2014-09-23 19:11:51.370879
+
+
 class Converter(J2Reader, EJWriter):
 	def __init__(self, filename, dbname, user, host, password):
 		self.open_file(filename)
@@ -9,6 +14,62 @@ class Converter(J2Reader, EJWriter):
 
 
 
+def convert_rostergroups():
+	filename = os.path.join(os.environ['HOME'], 'dev/ejabberd', 'jabberd2-export-roster-groups.csv')
+	converter = Converter(filename=filename, dbname="ejconv", user="ejconv", host="127.0.0.1",
+        password="ejconv")
+	converter.read()
+	counter = 0
+
+	dict_vcard = {}
+
+	for header in converter.get_header():
+		print counter, header
+		counter += 1
+
+	for row in converter.get_data():	
+		dict_vcard['username'] =  row[0].split('@')[0]
+		dict_vcard['jid'] = row[2]
+	 	dict_vcard['group'] = row[3]
+
+		converter.insert_roster_group(dict_vcard)	
+
+
+
+	#	print row, dict_vcard
+def convert_rosterusers():
+	filename = os.path.join(os.environ['HOME'], 'dev/ejabberd', 'jabberd2-export-roster-items.csv')
+	converter = Converter(filename=filename, dbname="ejconv", user="ejconv", host="127.0.0.1",
+        password="ejconv")
+	converter.read()
+
+
+	counter = 0
+
+	dict_vcard = {}
+
+
+	for header in converter.get_header():
+		print counter, header
+		counter += 1
+
+	for row in converter.get_data():	
+		dict_vcard['username'] =  row[0].split('@')[0]
+		dict_vcard['jid'] = row[2]
+		dict_vcard['nick'] = row[3]
+
+		dict_vcard['subscription'] ='N'
+		dict_vcard['ask'] ='N'
+		dict_vcard['server'] ='N'
+		if row[4]==row[5]:
+			if row[4]=='t':
+				dict_vcard['subscription'] ='B'	
+				print 'hello'
+		converter.insert_roster_user(dict_vcard)	
+
+
+
+		print row, dict_vcard
 		
 
 def convert_vcard()	:
@@ -62,6 +123,6 @@ def convert_users():
 	
 
 if __name__ == "__main__":
-	convert_vcard()
+	convert_rostergroups()
 
 

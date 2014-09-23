@@ -78,6 +78,15 @@ class EJWriter(object):
             %(bday)s,%(lbday)s, %(orgname)s, %(lorgname)s, %(orgunit)s, %(lorgunit)s, %(email)s,%(lemail)s, ' ',' ',' ', ' ', ' ', '')  """, dict_vcard)
         self.conn.commit()
 
+    def insert_roster_user(self, dict_vcard):
+        self.cur.execute("""INSERT INTO rosterusers(username, jid, nick, subscription, ask, askmessage, server, subscribe, type) 
+            VALUES (%(username)s,%(jid)s,%(nick)s,%(subscription)s,'N', '', 'N','', 'item');""", dict_vcard)
+        self.conn.commit()
+
+    def insert_roster_group(self, dict_vcard):
+        self.cur.execute("""INSERT INTO rostergroups(username, jid, grp) 
+            VALUES (%(username)s,%(jid)s,%(group)s);""", dict_vcard)
+        self.conn.commit()
 
 if __name__ == "__main__":
     writer = EJWriter(dbname="ejconv", user="ejconv", host="127.0.0.1",
